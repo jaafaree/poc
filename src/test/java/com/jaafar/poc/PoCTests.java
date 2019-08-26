@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * ${DESCRIPTION}
@@ -61,6 +62,35 @@ public class PoCTests {
 
 
     }
+
+    @Test
+    public void testAtomicIntegerForLeveraginInLambda() {
+        List<String> strings = new ArrayList<>();
+        strings.add("a");
+        strings.add("b");
+        strings.add("c");
+        strings.add("d");
+        strings.add("e");
+        strings.add("f");
+        strings.add("g");
+        strings.add("h");
+        strings.add("i");
+        strings.add("j");
+
+//        int i = 0;
+//        strings.stream().collect(Collectors.toMap(s -> i ++, s -> s));
+
+        AtomicInteger atomicInteger = new AtomicInteger();
+        strings.stream().collect(Collectors.toMap(s -> atomicInteger.getAndIncrement(), s -> s));
+
+        System.out.println(atomicInteger.getAndIncrement());
+        System.out.println(atomicInteger.getAndIncrement());
+        System.out.println(atomicInteger.getAndIncrement());
+        System.out.println(atomicInteger.getAndIncrement());
+        System.out.println(atomicInteger.getAndIncrement());
+        System.out.println(atomicInteger.getAndIncrement());
+    }
+
 
     @Test
     public void getFormattedESTDate(){
