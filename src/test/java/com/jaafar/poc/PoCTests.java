@@ -8,8 +8,10 @@ import org.junit.runners.JUnit4;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * ${DESCRIPTION}
@@ -164,6 +166,30 @@ public class PoCTests {
             }
         }
     }
+
+    @Test
+    public void testStreamBeenClosedIssue() {
+        List<String> strings = new ArrayList<>();
+        strings.add(null);
+
+        // will throw below exception at strings2 variable:
+        // java.lang.IllegalStateException: stream has already been operated upon or closed
+        Stream<String> stringStream = strings.stream().filter(Objects::nonNull);
+        List<String> strings1 = stringStream.collect(Collectors.toList());
+//        List<String> strings2 = stringStream.collect(Collectors.toList());
+
+        // supplier.get() will create new stream object, this makes the lambda operation can be reused.
+        // but unknown whether the get() method will executed each time when calling
+        // unfortunately, it will. System.ou.println(s) will print twice.
+        Supplier<Stream<String>> supplier = () -> strings.stream().filter(s -> {
+            System.out.println(s);
+            return s != null;
+        });
+        List<String> collect1 = supplier.get().collect(Collectors.toList());
+        List<String> collect2 = supplier.get().collect(Collectors.toList());
+    }
+
+
 
 
 
