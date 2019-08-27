@@ -2,6 +2,7 @@ package com.jaafar.poc.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jaafar.poc.exception.TestException;
 import com.jaafar.poc.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,5 +68,17 @@ public class PoCController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "demo.json" + "\"")
                 .body(objectMapper.writeValueAsBytes(arr));
     }
+
+    @GetMapping("/testruntimeexception")
+    public void testruntimeexception() {
+        throw new SubTestException();
+    }
+
+    class SubTestException extends TestException {
+        public SubTestException() {
+            super();
+        }
+    }
+
 
 }
