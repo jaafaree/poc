@@ -1,10 +1,13 @@
 package com.jaafar.poc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jaafar.poc.model.User;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -189,8 +192,29 @@ public class PoCTests {
         List<String> collect2 = supplier.get().collect(Collectors.toList());
     }
 
+    @Test
+    public void testSerialize() throws IOException {
+        String json = "12312312xxxx";
 
+        new ObjectMapper().readValue(json, User.class);
+    }
 
+    @Test
+    public void testStringSubString() {
+        String content = "API returned 123 adfasdfasdf";
+        boolean api_returned_ = content.startsWith("API returned ") & "123".equals(content.substring(13, 16));
+        Assert.assertTrue(api_returned_);
+    }
+
+    @Test
+    public void testDynamicParameters() {
+        User user = new User();
+        user.setAnswerOne("1");
+        user.setAnswerTwo("2");
+        user.setPassword("123");
+        User user1 = user.protectSensitiveData();
+        System.out.println(user1);
+    }
 
 
 }

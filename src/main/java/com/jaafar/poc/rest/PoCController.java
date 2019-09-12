@@ -8,9 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +80,26 @@ public class PoCController {
         public SubTestException() {
             super();
         }
+    }
+
+    @GetMapping("/testStaticField")
+    public User testStaticField() {
+        return new User("jaafar", 1L);
+    }
+
+    @GetMapping("/testResponseStatusException")
+    public String testResponseStatusException() {
+        throw new ResponseStatusException(HttpStatus.BAD_GATEWAY);
+    }
+
+    @GetMapping("/testProtectSensitiveData")
+    public User testProtectSensitiveData() {
+        User user = new User("test", 1L);
+        user.setAnswerOne("1");
+        user.setAnswerTwo("2");
+        user.setPassword("123");
+        user.setAn("adf");
+        return user.protectSensitiveData("en");
     }
 
 
