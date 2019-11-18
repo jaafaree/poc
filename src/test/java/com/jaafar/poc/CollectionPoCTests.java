@@ -49,6 +49,7 @@ public class CollectionPoCTests {
             };
             futures.add(service.submit(callable));
         }
+        service.shutdown();
         return futures.stream()
                 .map(listFuture -> {
                     try {
