@@ -2,6 +2,7 @@ package com.jaafar.poc.config;
 
 import com.jaafar.poc.exception.TestException;
 import com.jaafar.poc.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +18,7 @@ import java.io.IOException;
  * @author jaafaree
  * @create 8/27/2019 9:54 AM
  */
+@Slf4j
 @org.springframework.web.bind.annotation.ControllerAdvice
 public class ControllerAdvice {
     @ExceptionHandler(TestException.class)
@@ -32,6 +34,7 @@ public class ControllerAdvice {
     public ResponseEntity<String> handleExceptions(HttpServletRequest req, Exception ex) {
         System.out.println("major exception handler catching");
         String message = "Unexpected error occur";
+        log.error("", ex);
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

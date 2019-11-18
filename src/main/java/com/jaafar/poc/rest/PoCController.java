@@ -3,6 +3,9 @@ package com.jaafar.poc.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jaafar.poc.exception.TestException;
+import com.jaafar.poc.model.BaseResponse;
+import com.jaafar.poc.model.CollectionResponse;
+import com.jaafar.poc.model.OptionRequest;
 import com.jaafar.poc.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -102,5 +103,52 @@ public class PoCController {
         return user.protectSensitiveData("en");
     }
 
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        return new User();
+    }
+
+    @GetMapping("/vendors")
+    public List<User> getUsers(@RequestParam Long... ids) {
+        return Collections.singletonList(new User());
+    }
+
+    @GetMapping("/vendors/{id}")
+    public User getUser2(@PathVariable String id) {
+        return new User();
+    }
+
+    @PostMapping("/vendors")
+    public BaseResponse searchOption(@RequestBody OptionRequest request) {
+        final List<Map<String, String>> repo = new ArrayList<>();
+        for (long i = 0; i < 100; i++) {
+            Map<String, String> option = new HashMap<>();
+            option.put("id", i+ "");
+            option.put("text", "option " + i);
+            repo.add(option);
+        }
+        final List<Map<String, String>> result;
+        if (request.getIds() != null) {
+            result = request.getIds().stream()
+                    .map(id -> repo.stream().filter(i -> id .equals(i.get("id"))).findAny().orElse(null))
+                    .collect(Collectors.toList());
+        } else if (request.getSearchInput() != null) {
+            result = repo.stream()
+                    .filter(i -> i.get("text").contains(request.getSearchInput()))
+                    .collect(Collectors.toList());
+        } else {
+            result = repo;
+        }
+        long offset = request.getPager().getPer() * (request.getPager().getCur() - 1);
+        long limit = request.getPager().getPer();
+        return new CollectionResponse()
+                .total((long) result.size())
+                .data(
+                        result.stream()
+                                .skip(offset)
+                                .limit(limit)
+                                .collect(Collectors.toList())
+                );
+    }
 
 }
